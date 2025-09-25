@@ -65,8 +65,25 @@ class BankSystem{
         console.log(this.accounts)
     }
     // searching account by account number and customer name 
-    searchAccount({accountNumber,customerName} ={}){
+    searchAccount({accountNumber,customerName,includeInactive =false} ={}){
         let result =[...this.accounts];
+
+        if(accountNumber){
+            result =result.filter(acc =>acc.accountNumber===accountNumber.toString());
+        }
+        if(customerName){
+            result =result.filter( acc=>acc.customerName.toLowerCase().includes(customerName.toLowerCase()));   
+            
+        }
+        if(!includeInactive){
+            result=result.filter(acc=> acc.isActive=== true)
+        }
+        if(result.length === 0){
+            console.log("Account is not found")
+            return [];
+        }
+        console.log("Search result", result)
+        return result;
     }
 
 }
@@ -78,3 +95,7 @@ const acc2 = console.log(bank.createAccount("Srushti Amin", "current",1000));
 bank.deleteAccount("2");//must given as string
 //showing accounts
 bank.showAccount();
+//searching account
+bank.searchAccount({accountNumber: "2"})
+bank.searchAccount({accountNumber: "1"})
+
