@@ -88,9 +88,9 @@ class TodoManagement{
         // searching using title and description using query
             if(query){
                 const q =query.toLowerCase();// convert query to lowercase to compare 
-                result =result.filter(todo =>todo.title.toLowerCase().includes(q) || todo.description.toLowerCase().includes(q));
+                result =result.filter(todo =>todo.title.toLowerCase().includes(q) || todo.description.toLowerCase().includes(q));   
             }
-            return result.length ? result :"No matching todos found";
+            return result.length ? result :"No matching todos found";// if the array contain result return otherwise execute no match statement 
         }
 }
 
