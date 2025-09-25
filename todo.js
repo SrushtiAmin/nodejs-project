@@ -36,8 +36,6 @@ class TodoManagement{
         if(priority){
             result =result.filter(todo =>todo.priority === priority);
         }
-        // sorting eith all three 
-        
 
         //sorting
         if(sortBy === "createdAt"){
