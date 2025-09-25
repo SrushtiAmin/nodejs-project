@@ -36,6 +36,8 @@ class TodoManagement{
         if(priority){
             result =result.filter(todo =>todo.priority === priority);
         }
+        // sorting eith all three 
+        
 
         //sorting
         if(sortBy === "createdAt"){
@@ -118,14 +120,17 @@ todoApp.addTodo({
 
 });
 
-// Print the single created todo
-//console.log("New Todo Added:", newTodo);
+// //Print the single created todo
+// console.log("New Todo Added:", newTodo);
 
 // //list all todos
 // console.log(todoApp.listTodos());
 
 // //filtering todos
 // console.log("high priority:", todoApp.listTodos({priority:"high"}));
+// console.log("medium priority:", todoApp.listTodos({priority:"medium"}));
+// console.log("low priority:", todoApp.listTodos({priority:"low"}));
+
 
 // //sorting todos
 // console.log("sorted by due_date:", todoApp.listTodos({sortBy:"due_date"}));
@@ -148,8 +153,8 @@ todoApp.addTodo({
 // //updating id not exisiting
 // console.log(todoApp.updateStatus(4,"completed"));
 
-//searching by id
-console.log(todoApp.searchTodo({id : 2}));
+// //searching by id
+// console.log(todoApp.searchTodo({id : 2}));
 
-//searching by title and description
-console.log(todoApp.searchTodo({query :"express"}));
+// //searching by title and description
+// console.log(todoApp.searchTodo({query :"express"}));
