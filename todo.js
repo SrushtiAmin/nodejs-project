@@ -76,7 +76,22 @@ class TodoManagement{
             return removed;
 
         }
+        // search query by id,title,descriptino
 
+        searchTodo({id , query} ={}){
+           let result = [... this.todos];
+
+            if(id){
+            result =result.filter(todo =>todo.id === id);//check if id exist and if yes then check that asked id match with the id value 
+        }
+
+        // searching using title and description using query
+            if(query){
+                const q =query.toLowerCase();// convert query to lowercase to compare 
+                result =result.filter(todo =>todo.title.toLowerCase().includes(q) || todo.description.toLowerCase().includes(q));
+            }
+            return result.length ? result :"No matching todos found";
+        }
 }
 
 const todoApp = new TodoManagement();
@@ -121,15 +136,20 @@ todoApp.addTodo({
 //todoApp.updateStatus(2,"completed");
 //todoApp.updateStatus(4,"completed");
 
-//list all todos
-console.log(todoApp.listTodos());
+// //list all todos
+// console.log(todoApp.listTodos());
 
-//delete 
-console.log(todoApp.deletetodo(3));
+// //delete 
+// console.log(todoApp.deletetodo(3));
 
-//after deletion
-console.log(todoApp.listTodos());
+// //after deletion
+// console.log(todoApp.listTodos());
 
-//updating id not exisiting
-console.log(todoApp.updateStatus(4,"completed"));
+// //updating id not exisiting
+// console.log(todoApp.updateStatus(4,"completed"));
 
+//searching by id
+console.log(todoApp.searchTodo({id : 2}));
+
+//searching by title and description
+console.log(todoApp.searchTodo({query :"express"}));
