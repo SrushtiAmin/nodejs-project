@@ -85,6 +85,10 @@ class BankSystem{
         console.log("Search result", result)
         return result;
     }
+    //transfering amount from one account to another 
+    transferAmount(fromaccountNumber , to){
+
+    }
 
 }
 const bank =new BankSystem();
