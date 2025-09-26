@@ -2,6 +2,7 @@ class BankSystem{
     constructor(){
     this.accounts=[]; //empty array to store further entries
     this.accountCounter=1; //increment the index of entry
+    this.accountTransaction=1;//increment once transaction got done
     }
 
 //creating customer acc 
@@ -85,21 +86,199 @@ class BankSystem{
         console.log("Search result", result)
         return result;
     }
-    //transfering amount from one account to another 
+//transfering amount from one account to another 
     transferAmount(fromAccountNumber , toAccountNumber, amount){
+        // validation of account
+        if(fromAccountNumber === toAccountNumber){
+            console.log("Amount cant be tranfer to same account");
+            return false;
+        }
+
+        const fromAcc = this.accounts.find(acc =>acc.accountNumber === fromAccountNumber);
+        const toAcc = this.accounts.find(acc =>acc.accountNumber === toAccountNumber);
+
+        //validate the amount
+        if(amount<=0){
+            console.log("amount can not be transferred")
+            return false;
+        }
+
+        //validating from account
+        if(!fromAcc){
+            console.log("Source Account is not found");
+            return false;
+        }
+        if(!fromAcc.isActive){
+            console.log("Source Account is inactive");
+            return false;
+        }
+
+        if(!toAcc){
+            console.log("Destination Account is not found");
+            return false;
+        }
+        if(!toAcc.isActive){
+            console.log("Destination Account is inactive");
+            return false;
+        }
+
+        //validating amount in from account
+        if(fromAcc.balance < amount){
+            console.log("Account does not have enough balance");
+            return false;
+        }
+
+        //deduct amount from account
+        fromAcc.balance -= amount;
+        const txnIdFrom = `TXN${this.accountTransaction.toString().padStart(3,'0')}`;
+        this.accountTransaction++;
+
+        //variable storing info of transfering account
+        const fromTxn={
+            id: txnIdFrom,
+            type:'transfer-out',
+            amount,
+            description:`Amount transferred to account ${toAccountNumber}`,
+            timestamp: new Date().toISOString(),
+            balanceAfter: fromAcc.balance
+        };
+        fromAcc.transactions.push(fromTxn);
+
+        //adding amount to account
+        toAcc.balance += amount;
+        const txnIdTo = `TXN${this.accountTransaction.toString().padStart(3,'0')}`;
+        this.accountTransaction++;
+
+        //variable to show transfer info
+        const toTxn ={
+            id:txnIdTo,
+            type:'transfer-in',
+            amount,
+            description:`Amount has been credited from ${fromAccountNumber}`,
+            timestamp: new Date().toISOString(),
+            balanceAfter:toAcc.balance
+        };
+        toAcc.transactions.push(toTxn);
+
+        //printing ransfer amount
+        console.log(`${amount} has been transferred from ${fromAccountNumber} to ${toAccountNumber}`);
+
+        //printing info of acc after transfer has been done
+        console.log(`Source Account (${fromAcc.accountNumber} - ${fromAcc.customerName}):`);
+        console.log(`  ID: ${fromTxn.id} | Type: ${fromTxn.type} | Amount: ₹${fromTxn.amount} | Balance After: ₹${fromTxn.balanceAfter} | Time: ${fromTxn.timestamp}`);
+
+        console.log(`\nDestination Account (${toAcc.accountNumber} - ${toAcc.customerName}):`);
+        console.log(`  ID: ${toTxn.id} | Type: ${toTxn.type} | Amount: ₹${toTxn.amount} | Balance After: ₹${toTxn.balanceAfter} | Time: ${toTxn.timestamp}`);
+
+
+        return true;
+    }
+    //deposit and withdraw
+
+    //deposit
+    amountDeposit(accountNumber,amount){
+
+        const acc=this.accounts.find(acc =>acc.accountNumber===accountNumber);
+
+        if(!acc){
+            console.log("Account is not there");
+            return false;
+        }
+
+        if(!acc.isActive){
+            console.log("Account has not been active");
+            return false;
+        }
+        if(amount <=0){
+            console.log("Deposit amount should be greater than 0")
+            return false;
+        }
+
+        //updating amount
+
+        acc.balance += amount;
+        const txnId= `TXN${this.accountTransaction.toString().padStart(3,'0')}`;
+        this.accountTransaction++;
+
+        const txn={
+            id:txnId,
+            type:'deposit',
+            amount,
+            description:'Amount deposited',
+            timestamp : new Date().toISOString(),
+            balanceAfter: acc.balance 
+        };
+        acc.transactions.push(txn);
+
+        //printing info 
+        console.log(`${amount} has been deposited to ${accountNumber}`);
+        console.log(`New Balance: ${acc.balance}`)
+        return true;
 
     }
+    //withdrawal of amount
 
+    amountWithdraw(accountNumber,amount){
+        const acc=this.accounts.find(acc=>acc.accountNumber=== accountNumber)
+
+         if(!acc){
+            console.log("Account is not there");
+            return false;
+        }
+
+        if(!acc.isActive){
+            console.log("Account has not been active");
+            return false;
+        }
+        if(amount <=0){
+            console.log("withdrawal amount should be greater than 0")
+            return false;
+        }
+        if(acc.balance<amount){
+            console.log("Account does not have sufficient amount")
+            return false;
+        }
+        acc.balance -=amount;
+        const txnId= `TXN${this.accountTransaction.toString().padStart(3,'0')}`;
+        this.accountTransaction++;
+
+        const txn={
+            id:txnId,
+            type:'Withdraw',
+            amount,
+            description:'Amount has been withdrawal',
+            timestamp: new Date().toISOString(),
+            balanceAfter:acc.balance
+        }
+
+        console.log(`${amount} has been withdraw from account${accountNumber}`);
+        console.log(`New Balance: ${acc.balance}`);
+        return true;
+
+
+    }
+    
 }
 const bank =new BankSystem();
 //adding
 const acc1 = console.log(bank.createAccount("John Doe", "saving",1000));
 const acc2 = console.log(bank.createAccount("Srushti Amin", "current",1000));
 //deleting
-bank.deleteAccount("2");//must given as string
+//bank.deleteAccount("2");//must given as string
 //showing accounts
 bank.showAccount();
 //searching account
 bank.searchAccount({accountNumber: "2"})
 bank.searchAccount({accountNumber: "1"})
-
+//transfer amount
+bank.transferAmount("1","2",300)
+//showing account after transaction
+bank.showAccount();
+//deposit amount
+bank.amountDeposit("1",500)
+//showing account after deposit
+bank.showAccount();
+//withdrawal of amount
+bank.amountWithdraw("2",900);
+//account after withdrawal
+bank.showAccount();
