@@ -62,9 +62,40 @@ class BankSystem{
         return true;
     }
     // showing account
-    showAccount(){
-        console.log(this.accounts)
+showAccount(accountNumber = null) {
+    let accountsToShow = this.accounts;
+
+    // If a specific account number is provided
+    if (accountNumber) {
+        accountsToShow = accountsToShow.filter(a => a.accountNumber === accountNumber);
+        if (accountsToShow.length === 0) {
+            console.log(`Account ${accountNumber} not found`);
+            return;
+        }
     }
+
+    accountsToShow.forEach(acc => {
+        console.log(`Account Number : ${acc.accountNumber}`);
+        console.log(`Customer Name  : ${acc.customerName}`);
+        console.log(`Account Type   : ${acc.accountType}`);
+        console.log(`Balance        : ₹${acc.balance}`);
+        console.log(`Status         : ${acc.isActive ? "Active" : "Inactive"}`);
+        console.log(`Created At     : ${acc.createdAt}`);
+        console.log(`Total Txns     : ${acc.transactions.length}`);
+
+        if (acc.transactions.length > 0) {
+            console.log("\nTransaction History:");
+            acc.transactions.forEach(txn => {
+                console.log(
+                    `  [${txn.id}] ${txn.type.toUpperCase()} | Amount: ₹${txn.amount} | Balance After: ₹${txn.balanceAfter} | Time: ${txn.timestamp} | Note: ${txn.description}`
+                );
+            });
+        } else {
+            console.log("  No transactions yet.");
+        }
+    });
+}
+
     // searching account by account number and customer name 
     searchAccount({accountNumber,customerName,includeInactive =false} ={}){
         let result =[...this.accounts];
