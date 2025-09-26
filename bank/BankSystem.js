@@ -62,7 +62,7 @@ class BankSystem{
         return true;
     }
     // showing account
-showAccount(accountNumber = null) {
+    showAccount(accountNumber = null) {
     let accountsToShow = this.accounts;
 
     // If a specific account number is provided
@@ -280,7 +280,9 @@ showAccount(accountNumber = null) {
             description:'Amount has been withdrawal',
             timestamp: new Date().toISOString(),
             balanceAfter:acc.balance
-        }
+        };
+        acc.transactions.push(txn);
+
 
         console.log(`${amount} has been withdraw from account${accountNumber}`);
         console.log(`New Balance: ${acc.balance}`);
