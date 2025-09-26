@@ -86,7 +86,7 @@ class BankSystem{
         return result;
     }
     //transfering amount from one account to another 
-    transferAmount(fromaccountNumber , to){
+    transferAmount(fromAccountNumber , toAccountNumber, amount){
 
     }
 
