@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "id": "db8a26f5-b87c-4031-8002-1cc4d1a81f40",
+    "name": "Laptop",
+    "price": 1200,
+    "costPrice": 800,
+    "quantity": 25,
+    "minStockLevel": 5,
+    "tags": [
+      "sale",
+      "new",
+      "popular"
+    ],
+    "inStock": true,
+    "createdAt": "2025-09-29T13:41:54.153Z",
+    "updatedAt": "2025-09-29T13:41:54.153Z"
+  },
+  {
+    "id": "d269a5d2-e086-40f4-a13f-a958bd9f927b",
+    "name": "Mobile",
+    "price": 800,
+    "costPrice": 600,
+    "quantity": 20,
+    "minStockLevel": 1,
+    "tags": [
+      "sale"
+    ],
+    "inStock": true,
+    "createdAt": "2025-09-29T13:43:35.055Z",
+    "updatedAt": "2025-09-29T13:43:35.055Z"
+  }
+]
