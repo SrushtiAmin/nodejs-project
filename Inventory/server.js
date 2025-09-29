@@ -1,10 +1,10 @@
 const http = require('http');
 const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid');// for giving id uniquely
 const port = 3000;
 const host = 'localhost';
 
-// ---------------- Helper Functions ----------------
+//  Helper Functions 
 function readProducts() {
   try {
     const data = fs.readFileSync('./data/product.json', 'utf-8');
@@ -18,19 +18,19 @@ function writeProducts(products) {
   fs.writeFileSync('./data/product.json', JSON.stringify(products, null, 2));
 }
 
-// ---------------- Server ----------------
+// Server
 const server = http.createServer((req, res) => {
   const { method, url } = req;
 
   if (url === '/api/products') {
-    // ---------------- GET all products ----------------
+    // GET all products 
     if (method === 'GET') {
       const products = readProducts();
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(products));
     } 
     
-    // ---------------- POST new product ----------------
+    //  POST new product 
     else if (method === 'POST') {
       let body = '';
       req.on('data', chunk => body += chunk.toString());
@@ -67,21 +67,21 @@ const server = http.createServer((req, res) => {
       });
     } 
     
-    // ---------------- Method Not Allowed ----------------
+    // Method Not Allowed 
     else {
       res.writeHead(405, { 'Content-Type': 'text/plain' });
       res.end('Method Not Allowed');
     }
   } 
   
-  // ---------------- Invalid URL ----------------
+  //  Invalid URL 
   else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Endpoint Not Found');
   }
 });
 
-// ---------------- Start server ----------------
+// Start server
 server.listen(port, host, () => {
   console.log(`Server is running at http://${host}:${port}/`);
 });
