@@ -7,7 +7,14 @@ class BankSystem {
         this.accountCounter = 1; // increment the index of entry
         this.accountTransaction = 1; // increment once transaction got done
 
-        
+        // ---------------- DB Connection ----------------
+        (async () => {
+            this.db = await open({
+                filename: './bank.db', // your DB file path
+                driver: sqlite3.Database
+            });
+            console.log(" DB Connected Successfully!");
+        })();
     }
 
     //creating customer acc 
