@@ -13,7 +13,7 @@ class BankSystem {
                 filename: './bank.db', // your DB file path
                 driver: sqlite3.Database
             });
-            console.log(" DB Connected Successfully!");
+            console.log("DB Connected Successfully!");
         })();
     }
 
