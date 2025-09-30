@@ -1,10 +1,11 @@
 const http = require('http');
 const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');// for giving id uniquely
+const urlModule = require('url');   // for parsing query params
+const { v4: uuidv4 } = require('uuid');
 const port = 3000;
 const host = 'localhost';
 
-//  Helper Functions 
+// Helper Functions
 function readProducts() {
   try {
     const data = fs.readFileSync('./data/product.json', 'utf-8');
@@ -22,15 +23,28 @@ function writeProducts(products) {
 const server = http.createServer((req, res) => {
   const { method, url } = req;
 
-  if (url === '/api/products') {
-    // GET all products 
+  // Match all requests that start with /api/products
+  if (url.startsWith('/api/products')) {
+    // GET products
     if (method === 'GET') {
       const products = readProducts();
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(products));
-    } 
-    
-    //  POST new product 
+
+      // Parse query string (e.g., ?name=Tablet)
+      const queryObject = urlModule.parse(url, true).query;
+
+      if (queryObject.name) {
+        const filtered = products.filter(
+          p => p.name.toLowerCase() === queryObject.name.toLowerCase()
+        );
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(filtered));
+      } else {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(products));
+      }
+    }
+
+    // POST new product
     else if (method === 'POST') {
       let body = '';
       req.on('data', chunk => body += chunk.toString());
@@ -65,16 +79,16 @@ const server = http.createServer((req, res) => {
         res.writeHead(201, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(newProduct));
       });
-    } 
-    
-    // Method Not Allowed 
+    }
+
+    // Unsupported method
     else {
       res.writeHead(405, { 'Content-Type': 'text/plain' });
       res.end('Method Not Allowed');
     }
-  } 
-  
-  //  Invalid URL 
+  }
+
+  // Invalid URL
   else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Endpoint Not Found');

@@ -28,5 +28,21 @@
     "inStock": true,
     "createdAt": "2025-09-29T13:43:35.055Z",
     "updatedAt": "2025-09-29T13:43:35.055Z"
+  },
+  {
+    "id": "ee93f19b-1b4c-41d3-9ad5-dcfc182f0a67",
+    "name": "Tablet",
+    "category": "Electronics",
+    "price": 500,
+    "costPrice": 300,
+    "quantity": 15,
+    "minStockLevel": 3,
+    "tags": [
+      "new",
+      "sale"
+    ],
+    "inStock": true,
+    "createdAt": "2025-09-30T04:17:42.706Z",
+    "updatedAt": "2025-09-30T04:17:42.706Z"
   }
 ]
