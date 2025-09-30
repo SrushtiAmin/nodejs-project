@@ -1,3 +1,4 @@
+//imports
 const http = require('http');
 const fs = require('fs');
 const urlModule = require('url'); // for parsing query params
@@ -5,7 +6,7 @@ const { v4: uuidv4 } = require('uuid'); // for unique IDs
 const port = 3000;
 const host = 'localhost';
 
-// ---------------- Helper Functions ----------------
+// Helper Functions 
 function readProducts() {
   try {
     const data = fs.readFileSync('./data/product.json', 'utf-8');
@@ -19,14 +20,14 @@ function writeProducts(products) {
   fs.writeFileSync('./data/product.json', JSON.stringify(products, null, 2));
 }
 
-// ---------------- Server ----------------
+//  Server
 const server = http.createServer((req, res) => {
   const { method, url } = req;
   const urlObj = urlModule.parse(url, true);
   const pathname = urlObj.pathname;
   const query = urlObj.query;
 
-  // ------------- Routes -------------
+  //  Routes 
   // /api/products -> GET list, POST new
   if (pathname === '/api/products') {
     if (method === 'GET') {
