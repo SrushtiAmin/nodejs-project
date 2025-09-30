@@ -100,7 +100,7 @@ const server = http.createServer((req, res) => {
       });
     }
     //update the products
-    else if(method === 'PUT' && pathname.startsWith('./api/products')){
+    else if(method === 'PUT' && pathname.startsWith('/api/products')){
       const id =pathname.split('/').pop();//getting id from URL
       let body ='';
        req.on('data', chunk => body += chunk.toString());
@@ -138,7 +138,7 @@ const server = http.createServer((req, res) => {
     });
   }
     //deleting product 
-      if(method === 'DELETE' && pathname =='./api/products'){
+      else if(method === 'DELETE' && pathname.startsWith('/api/products')){
         const id =pathname.split('/').pop();
         
         const products =readProducts();

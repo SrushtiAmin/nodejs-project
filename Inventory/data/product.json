@@ -109,5 +109,22 @@
     "inStock": false,
     "createdAt": "2025-09-30T09:44:25.148Z",
     "updatedAt": "2025-09-30T09:44:25.148Z"
+  },
+  {
+    "id": "aea2568b-5f7b-4796-b4c1-baae296c2f30",
+    "name": "Computer",
+    "category": "Electronics",
+    "price": 20000,
+    "costPrice": 15000,
+    "quantity": 20,
+    "minStockLevel": 1,
+    "tags": [
+      "sale",
+      "popular",
+      "new"
+    ],
+    "inStock": true,
+    "createdAt": "2025-09-30T10:39:51.286Z",
+    "updatedAt": "2025-09-30T10:39:51.286Z"
   }
 ]
