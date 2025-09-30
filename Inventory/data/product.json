@@ -44,5 +44,19 @@
     "inStock": true,
     "createdAt": "2025-09-30T04:17:42.706Z",
     "updatedAt": "2025-09-30T04:17:42.706Z"
+  },
+  {
+    "id": "6f32f291-22c3-462b-b196-d2b1f8fe1a7a",
+    "name": "Lipstick",
+    "price": 500,
+    "costPrice": 250,
+    "quantity": 10,
+    "minStockLevel": 5,
+    "tags": [
+      "sale"
+    ],
+    "inStock": true,
+    "createdAt": "2025-09-30T05:28:28.916Z",
+    "updatedAt": "2025-09-30T05:28:28.916Z"
   }
 ]

@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const urlModule = require('url');   // for parsing query params
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid');// for uniquely giving ids
 const port = 3000;
 const host = 'localhost';
 
@@ -34,7 +34,7 @@ const server = http.createServer((req, res) => {
 
       if (queryObject.name) {
         const filtered = products.filter(
-          p => p.name.toLowerCase() === queryObject.name.toLowerCase()
+          p => p.name.toLowerCase().includes(queryObject.name.toLowerCase())
         );
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(filtered));
