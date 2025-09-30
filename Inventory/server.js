@@ -22,28 +22,46 @@ function writeProducts(products) {
 // Server
 const server = http.createServer((req, res) => {
   const { method, url } = req;
+  const urlObj = urlModule.parse(url, true); // parse URL & query
+  const pathname = urlObj.pathname;
+  const query = urlObj.query;// extract the product based on query 
 
   // Match all requests that start with /api/products
-  if (url.startsWith('/api/products')) {
-    // GET products
-    if (method === 'GET') {
-      const products = readProducts();
+    if(pathname === '/api/products'){
 
-      // Parse query string (e.g., ?name=Tablet)
-      const queryObject = urlModule.parse(url, true).query;
+      //get by the filters 
+      if(method ==='GET'){
+        let products = readProducts();
 
-      if (queryObject.name) {
-        const filtered = products.filter(
-          p => p.name.toLowerCase().includes(queryObject.name.toLowerCase())
-        );
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(filtered));
-      } else {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        // filter by name 
+        if(query.name){
+          products =products.filter(p => p.name.toLowerCase().includes(query.name.toLowerCase()))
+        }
+
+        //filter by category
+        if(query.category){
+         products =products.filter(p => p.category.toLowerCase().includes(query.category.toLowerCase()))
+        }
+        //filter by stock
+        if ('inStock' in query) {
+          const inStock = query.inStock.toLowerCase() === "true" || "false";
+          products = products.filter(p => p.inStock === inStock);
+        }
+        //filter by price range
+        if(query.minPrice || query.maxPrice){
+          const minPrice =parseFloat(query.minPrice) || 0;
+          const maxPrice =parseFloat(query.maxPrice) || Infinity;
+          products = products.filter(p => p.price >= minPrice && p.price <= maxPrice);// between min and max price 
+        }
+        //filter by tags 
+        if(query.tags){
+          const tags =query.tags.split(',').map(t=>t.toLowerCase());
+          products =products.filter(p => p.tags.some(tag => tags.includes(tag.toLowerCase())))
+        }
+
+        res.writeHead(200,{'content-type':'application/json'});
         res.end(JSON.stringify(products));
       }
-    }
-
     // POST new product
     else if (method === 'POST') {
       let body = '';
