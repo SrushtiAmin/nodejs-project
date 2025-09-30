@@ -1,11 +1,11 @@
 [
   {
     "id": "db8a26f5-b87c-4031-8002-1cc4d1a81f40",
-    "name": "Laptop",
+    "name": "Computer",
     "category": "Electronics",
-    "price": 1200,
-    "costPrice": 800,
-    "quantity": 25,
+    "price": 20000,
+    "costPrice": 15000,
+    "quantity": 30,
     "minStockLevel": 5,
     "tags": [
       "sale",
@@ -14,22 +14,22 @@
     ],
     "inStock": true,
     "createdAt": "2025-09-29T13:41:54.153Z",
-    "updatedAt": "2025-09-29T13:41:54.153Z"
+    "updatedAt": "2025-09-30T11:02:22.617Z"
   },
   {
     "id": "d269a5d2-e086-40f4-a13f-a958bd9f927b",
     "name": "Mobile",
     "category": "Electronics",
-    "price": 800,
+    "price": 1000,
     "costPrice": 600,
-    "quantity": 20,
+    "quantity": 3,
     "minStockLevel": 1,
     "tags": [
       "sale"
     ],
     "inStock": true,
     "createdAt": "2025-09-29T13:43:35.055Z",
-    "updatedAt": "2025-09-29T13:43:35.055Z"
+    "updatedAt": "2025-09-30T10:58:49.990Z"
   },
   {
     "id": "ee93f19b-1b4c-41d3-9ad5-dcfc182f0a67",
@@ -111,20 +111,51 @@
     "updatedAt": "2025-09-30T09:44:25.148Z"
   },
   {
-    "id": "aea2568b-5f7b-4796-b4c1-baae296c2f30",
-    "name": "Computer",
+    "id": "ceef7e9e-e498-4487-b2d2-0efde28ab583",
+    "name": "Laptop",
     "category": "Electronics",
-    "price": 20000,
-    "costPrice": 15000,
-    "quantity": 20,
+    "price": 2000,
+    "costPrice": 1500,
+    "quantity": 2,
     "minStockLevel": 1,
+    "tags": [
+      "sale"
+    ],
+    "inStock": true,
+    "createdAt": "2025-09-30T11:15:11.264Z",
+    "updatedAt": "2025-09-30T11:15:11.264Z"
+  },
+  {
+    "id": "4707af84-5fae-4ea9-b2d4-b5d9171f7415",
+    "name": "Nose-Ring",
+    "category": "Accessories",
+    "price": 200,
+    "costPrice": 150,
+    "quantity": 25,
+    "minStockLevel": 10,
+    "tags": [
+      "sale",
+      "popular"
+    ],
+    "inStock": true,
+    "createdAt": "2025-09-30T11:15:52.013Z",
+    "updatedAt": "2025-09-30T11:15:52.013Z"
+  },
+  {
+    "id": "539fb058-4ddc-4864-ba14-f7c39c22e2b6",
+    "name": "Earring",
+    "category": "Accessories",
+    "price": 300,
+    "costPrice": 270,
+    "quantity": 10,
+    "minStockLevel": 5,
     "tags": [
       "sale",
       "popular",
       "new"
     ],
     "inStock": true,
-    "createdAt": "2025-09-30T10:39:51.286Z",
-    "updatedAt": "2025-09-30T10:39:51.286Z"
+    "createdAt": "2025-09-30T11:17:02.631Z",
+    "updatedAt": "2025-09-30T11:17:02.631Z"
   }
 ]
