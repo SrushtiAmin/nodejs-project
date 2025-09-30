@@ -92,5 +92,22 @@
     "inStock": false,
     "createdAt": "2025-09-30T07:30:28.400Z",
     "updatedAt": "2025-09-30T07:30:28.400Z"
+  },
+  {
+    "id": "bd46828b-e937-4aa4-bb19-2c8c5ea53af6",
+    "name": "Ring",
+    "category": "Accessories",
+    "price": 200,
+    "costPrice": 150,
+    "quantity": 0,
+    "minStockLevel": 3,
+    "tags": [
+      "sale",
+      "popular",
+      "new"
+    ],
+    "inStock": false,
+    "createdAt": "2025-09-30T09:44:25.148Z",
+    "updatedAt": "2025-09-30T09:44:25.148Z"
   }
 ]

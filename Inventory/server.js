@@ -35,7 +35,8 @@ const server = http.createServer((req, res) => {
 
         // filter by name 
         if(query.name){
-          products =products.filter(p => p.name.toLowerCase().includes(query.name.toLowerCase()))
+          const searchName = query.name.toLowerCase();
+          products =products.filter(p => p.name.toLowerCase()=== searchName)
         }
 
         //filter by category
@@ -98,7 +99,64 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify(newProduct));
       });
     }
+    //update the products
+    else if(method === 'PUT' && pathname.startsWith('./api/products')){
+      const id =pathname.split('/').pop();//getting id from URL
+      let body ='';
+       req.on('data', chunk => body += chunk.toString());
+       req.on('end', () => {
+        let data;
+        try {
+          data = JSON.parse(body);
+        } catch (err) {
+          res.writeHead(400, { 'Content-Type': 'text/plain' });
+          return res.end('Invalid JSON');
+        }
 
+          const products = readProducts();
+          const productIndex =products.findIndex(p =>p.id ===id)
+
+          //if id exist or not
+          if(productIndex === -1){
+            res.writeHead(404, {'Content-type':'text/plain'});
+            return res.end('Product not found');
+          }
+          //updating only necesarry fields
+          products[productIndex]={
+            ...products[productIndex],//keep unchanged
+            ...data,//overwrite the values
+
+            inStock :data.quantity !== undefined ? data.quantity> 0: products[productIndex].inStock,
+            updatedAt: new Date().toISOString()
+          }
+
+          writeProducts(products);
+
+          res.writeHead(200,{'Content-type':'application/json'});
+          res.end(JSON.stringify(products[productIndex]));
+
+    });
+  }
+    //deleting product 
+      if(method === 'DELETE' && pathname =='./api/products'){
+        const id =pathname.split('/').pop();
+        
+        const products =readProducts();
+        const productIndex=products.findIndex(p =>p.id === id);
+
+         //if id exist or not
+          if(productIndex === -1){
+            res.writeHead(404, {'Content-type':'text/plain'});
+            return res.end('Product not found');
+          }
+
+          const deleteProduct =products.splice(productIndex,1)[0];
+          writeProducts(products);
+
+          res.writeHead(200,{"content-type":'application/json'});
+          res.end(JSON.stringify({message:"Product has been deleted succesfully", deleteProduct}));
+
+      }
     // Unsupported method
     else {
       res.writeHead(405, { 'Content-Type': 'text/plain' });
