@@ -44,8 +44,8 @@ const server = http.createServer((req, res) => {
         }
         //filter by stock
         if ('inStock' in query) {
-          const inStock = query.inStock.toLowerCase() === "true" || "false";
-          products = products.filter(p => p.inStock === inStock);
+          const inStock = query.inStock === "true";
+          products = products.filter(p => Boolean(p.inStock) === inStock);
         }
         //filter by price range
         if(query.minPrice || query.maxPrice){
