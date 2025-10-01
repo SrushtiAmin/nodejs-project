@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "15a12c",
+    "originalUrl": "https://google.com",
+    "shortUrl": "http://localhost:3000/15a12c",
+    "clicks": 0,
+    "isActive": true,
+    "expiresAt": "2025-10-31T08:35:12.896Z",
+    "createdAt": "2025-10-01T08:35:12.896Z"
+  }
+]
