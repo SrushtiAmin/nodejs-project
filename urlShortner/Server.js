@@ -101,11 +101,43 @@ app.get('/api/shorten/urls', (req, res) => {
         // Redirect to original URL
         res.redirect(urlEntry.originalUrl);
     });
+    //put
+     app.get('/api/shorten/:id', (req, res) => {
+        const urls = readUrls();
+        const id = req.params.id.trim();
+        const urlEntry = urls.find(u => u.id === id);
+
+        if (!urlEntry) {
+            return res.status(404).json({ error: "URL not found" });
+        }
+
+        const {originalUrl,isActive,expiresAt} =req.body;
+
+        if(originalUrl&&validUrl.isUri(originalUrl)){
+            urlEntry.originalUrl==originalUrl;
+        }
+        if(expiresAt) urlEntry.expiresAt==expiresAt;
+        if(isActive===Boolean) urlEntry.isActive==isActive;
+
+        writeUrls(urls)//save updated urls values
+        res.json(urlEntry);//show updated url
+
+    });
+    //delete url
+    app.get('/api/shorten/:id', (req, res) => {
+        const urls = readUrls();
+        const id = req.params.id.trim();
+        const urlEntry = urls.find(u => u.id === id);
+
+        if (!urlEntry) {
+            return res.status(404).json({ error: "URL not found" });
+        }
+    });
 
 
-//connecting server 
-app.listen(port,()=>{
-    console.log(`server is connected http://localhost:${port}`)
-});
+    //connecting server 
+    app.listen(port,()=>{
+        console.log(`server is connected http://localhost:${port}`)
+    });
 
 
