@@ -60,11 +60,52 @@ app.post('/api/shorten',(req,res)=>{
 
         res.status(201).json(newUrls);
       });
+        //GET all URLs
+app.get('/api/shorten/urls', (req, res) => {
+    const urls = readUrls();
+    res.json(urls);
+});
+
+    //GET URL by ID
+    app.get('/api/shorten/:id', (req, res) => {
+        const urls = readUrls();
+        const id = req.params.id.trim();
+        const urlEntry = urls.find(u => u.id === id);
+
+        if (!urlEntry) {
+            return res.status(404).json({ error: "URL not found" });
+        }
+
+        res.json(urlEntry);
+    });
+
+    //Redirect short URL
+    app.get('/:id', (req, res) => {
+        const urls = readUrls();
+        const id = req.params.id.trim(); // trim any whitespace
+        const urlEntry = urls.find(u => u.id === id); // use trimmed id
+
+        if (!urlEntry) {
+            return res.status(404).json({ error: "URL not found" });
+        }
+
+        // Check if expired
+        if (urlEntry.expiresAt && new Date(urlEntry.expiresAt) < new Date()) {
+            return res.status(410).json({ message: "URL has expired" });
+        }
+
+        // Increment clicks
+        urlEntry.clicks += 1;
+        writeUrls(urls);
+
+        // Redirect to original URL
+        res.redirect(urlEntry.originalUrl);
+    });
+
 
 //connecting server 
 app.listen(port,()=>{
     console.log(`server is connected http://localhost:${port}`)
 });
-
 
 
