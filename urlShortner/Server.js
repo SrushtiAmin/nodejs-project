@@ -1,143 +1,179 @@
-// import express
-const express =require('express');
-const fs =require('fs');
-const { v4: uuidv4 } = require('uuid'); // for unique IDs
-const validUrl = require('valid-url'); // valid url package to know if the url is valid or not
+// Importing required modules
+const express = require('express');
+const fs = require('fs').promises;  // Using async fs methods
+const { v4: uuidv4 } = require('uuid');
+const validUrl = require('valid-url');
 
-// Helper Functions 
-function readUrls() {
+const app = express();
+const PORT = 3000;
+const DATA_FILE = './data/urls.json';
+
+app.use(express.json()); // Middleware to parse JSON requests
+
+// ---------------- Helper Functions ----------------
+
+// ✅ Read data from JSON file (asynchronous)
+async function readUrls() {
   try {
-    const data = fs.readFileSync('./data/urls.json', 'utf-8');
+    const data = await fs.readFile(DATA_FILE, 'utf-8');
     return JSON.parse(data);
-  } catch (err) {
-    return [];
+  } catch (error) {
+    // If file doesn’t exist, return empty array
+    if (error.code === 'ENOENT') return [];
+    throw error;
   }
 }
 
-function writeUrls(urls) {
-  fs.writeFileSync('./data/urls.json', JSON.stringify(urls, null, 2));
+// ✅ Write data to JSON file (asynchronous)
+async function writeUrls(urls) {
+  await fs.writeFile(DATA_FILE, JSON.stringify(urls, null, 2));
 }
 
-//creating instance 
-const app = express();
-// middleware
-app.use(express.json());
-//port 
-const port =3000;
-//defining routes 
-app.get('/', (req,res)=>{
-    res.send("Connected through express")
-});
+// ✅ Generate short code
+function generateShortCode() {
+  return uuidv4().slice(0, 8); // Short unique ID
+}
 
-//post
-app.post('/api/shorten',(req,res)=>{
+// ---------------- ROUTES ----------------
 
-    const {originalUrl,customAlias,expiresAt} =req.body;
-    //validating url
-    if(!validUrl.isUri(originalUrl))
-    {
-        return res.status(400).json({error:"Invalid URL"});
-    }
-    let urls= readUrls();
+// 1️⃣ GET - Fetch all URLs or search by shortCode
+app.get('/api/urls', async (req, res) => {
+  try {
+    const urls = await readUrls();
+    const { code } = req.query;
 
-    let id = customAlias || uuidv4().slice(0,6);
-    if(urls.find(u=>u.id === id)){
-        return res.status(400).json({message:"URL exists already"});
+    if (code) {
+      const found = urls.find(u => u.shortCode === code);
+      if (!found) return res.status(404).json({ error: 'Short code not found' });
+      return res.json(found);
     }
 
-    const newUrls={
-        id ,
-        originalUrl,
-        shortUrl:`http://localhost:${port}/${id}`,
-        clicks:0,
-        isActive: true,
-        expiresAt: expiresAt || new Date(Date.now() + 30*24*60*60*1000).toISOString(),//expires within 30 days of creation by default is expry date is not given 
-        createdAt: new Date().toISOString()
-
-    };
-        urls.push(newUrls);
-        writeUrls(urls);
-
-        res.status(201).json(newUrls);
-      });
-        //GET all URLs
-app.get('/api/shorten/urls', (req, res) => {
-    const urls = readUrls();
     res.json(urls);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch URLs' });
+  }
 });
 
-    //GET URL by ID
-    app.get('/api/shorten/:id', (req, res) => {
-        const urls = readUrls();
-        const id = req.params.id.trim();
-        const urlEntry = urls.find(u => u.id === id);
+// 2️⃣ POST - Create a new short URL
+app.post('/api/urls', async (req, res) => {
+  try {
+    const { originalUrl, expiresAt } = req.body;
 
-        if (!urlEntry) {
-            return res.status(404).json({ error: "URL not found" });
-        }
+    // Validation
+    if (!originalUrl || !validUrl.isUri(originalUrl)) {
+      return res.status(400).json({ error: 'Invalid or missing URL' });
+    }
 
-        res.json(urlEntry);
-    });
+    const urls = await readUrls();
+    const shortCode = generateShortCode();
 
-    //Redirect short URL
-    app.get('/:id', (req, res) => {
-        const urls = readUrls();
-        const id = req.params.id.trim(); // trim any whitespace
-        const urlEntry = urls.find(u => u.id === id); // use trimmed id
+    const newUrl = {
+      id: uuidv4(),
+      shortCode,
+      originalUrl,
+      createdAt: new Date().toISOString(),
+      expiresAt: expiresAt || null,
+      isActive: true
+    };
 
-        if (!urlEntry) {
-            return res.status(404).json({ error: "URL not found" });
-        }
+    urls.push(newUrl);
+    await writeUrls(urls);
 
-        // Check if expired
-        if (urlEntry.expiresAt && new Date(urlEntry.expiresAt) < new Date()) {
-            return res.status(410).json({ message: "URL has expired" });
-        }
+    res.status(201).json({ message: 'Short URL created successfully', data: newUrl });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create short URL' });
+  }
+});
 
-        // Increment clicks
-        urlEntry.clicks += 1;
-        writeUrls(urls);
+// 3️⃣ PUT - Full update (replace entire record)
+app.put('/api/urls/:id', async (req, res) => {
+  try {
+    const { originalUrl, expiresAt, isActive } = req.body;
+    const urls = await readUrls();
+    const index = urls.findIndex(u => u.id === req.params.id);
 
-        // Redirect to original URL
-        res.redirect(urlEntry.originalUrl);
-    });
-    //put
-     app.get('/api/shorten/:id', (req, res) => {
-        const urls = readUrls();
-        const id = req.params.id.trim();
-        const urlEntry = urls.find(u => u.id === id);
+    if (index === -1) return res.status(404).json({ error: 'URL not found' });
 
-        if (!urlEntry) {
-            return res.status(404).json({ error: "URL not found" });
-        }
+    // Validation
+    if (!originalUrl || !validUrl.isUri(originalUrl)) {
+      return res.status(400).json({ error: 'Invalid or missing URL' });
+    }
 
-        const {originalUrl,isActive,expiresAt} =req.body;
+    // Replace the whole object
+    urls[index] = {
+      ...urls[index],
+      originalUrl,
+      expiresAt: expiresAt || null,
+      isActive: isActive ?? true,
+      updatedAt: new Date().toISOString()
+    };
 
-        if(originalUrl&&validUrl.isUri(originalUrl)){
-            urlEntry.originalUrl==originalUrl;
-        }
-        if(expiresAt) urlEntry.expiresAt==expiresAt;
-        if(isActive===Boolean) urlEntry.isActive==isActive;
+    await writeUrls(urls);
+    res.json({ message: 'URL updated successfully', data: urls[index] });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update URL' });
+  }
+});
 
-        writeUrls(urls)//save updated urls values
-        res.json(urlEntry);//show updated url
+// 4️⃣ PATCH - Partial update (update specific fields only)
+app.patch('/api/urls/:id', async (req, res) => {
+  try {
+    const { originalUrl, expiresAt, isActive } = req.body;
+    const urls = await readUrls();
+    const url = urls.find(u => u.id === req.params.id);
 
-    });
-    //delete url
-    app.get('/api/shorten/:id', (req, res) => {
-        const urls = readUrls();
-        const id = req.params.id.trim();
-        const urlEntry = urls.find(u => u.id === id);
+    if (!url) return res.status(404).json({ error: 'URL not found' });
 
-        if (!urlEntry) {
-            return res.status(404).json({ error: "URL not found" });
-        }
-    });
+    if (originalUrl && !validUrl.isUri(originalUrl)) {
+      return res.status(400).json({ error: 'Invalid URL' });
+    }
 
+    // Only update provided fields
+    if (originalUrl) url.originalUrl = originalUrl;
+    if (expiresAt) url.expiresAt = expiresAt;
+    if (typeof isActive === 'boolean') url.isActive = isActive;
 
-    //connecting server 
-    app.listen(port,()=>{
-        console.log(`server is connected http://localhost:${port}`)
-    });
+    url.updatedAt = new Date().toISOString();
 
+    await writeUrls(urls);
+    res.json({ message: 'URL partially updated', data: url });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to partially update URL' });
+  }
+});
 
+// 5️⃣ DELETE - Remove a URL
+app.delete('/api/urls/:id', async (req, res) => {
+  try {
+    const urls = await readUrls();
+    const filtered = urls.filter(u => u.id !== req.params.id);
+
+    if (urls.length === filtered.length) {
+      return res.status(404).json({ error: 'URL not found' });
+    }
+
+    await writeUrls(filtered);
+    res.json({ message: 'URL deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete URL' });
+  }
+});
+
+// 6️⃣ Redirect route - (optional) Access original URL using shortCode
+app.get('/:code', async (req, res) => {
+  try {
+    const urls = await readUrls();
+    const url = urls.find(u => u.shortCode === req.params.code && u.isActive);
+
+    if (!url) return res.status(404).json({ error: 'Invalid or expired short link' });
+
+    res.redirect(url.originalUrl);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to redirect' });
+  }
+});
+
+// ---------------- Start Server ----------------
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
