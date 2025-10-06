@@ -12,32 +12,31 @@ app.use(express.json()); // Middleware to parse JSON requests
 
 // ---------------- Helper Functions ----------------
 
-// ✅ Read data from JSON file (asynchronous)
+// Read data from JSON file (async)
 async function readUrls() {
   try {
     const data = await fs.readFile(DATA_FILE, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
-    // If file doesn’t exist, return empty array
     if (error.code === 'ENOENT') return [];
     throw error;
   }
 }
 
-// ✅ Write data to JSON file (asynchronous)
+// Write data to JSON file (async)
 async function writeUrls(urls) {
   await fs.writeFile(DATA_FILE, JSON.stringify(urls, null, 2));
 }
 
-// ✅ Generate short code
+// Generate short code
 function generateShortCode() {
-  return uuidv4().slice(0, 8); // Short unique ID
+  return uuidv4().slice(0, 8);
 }
 
 // ---------------- ROUTES ----------------
 
-// 1️⃣ GET - Fetch all URLs or search by shortCode
-app.get('/api/urls', async (req, res) => {
+// GET - Fetch all URLs or search by shortCode
+app.get('/api/shorten', async (req, res) => {
   try {
     const urls = await readUrls();
     const { code } = req.query;
@@ -54,12 +53,11 @@ app.get('/api/urls', async (req, res) => {
   }
 });
 
-// 2️⃣ POST - Create a new short URL
-app.post('/api/urls', async (req, res) => {
+// POST - Create a new short URL
+app.post('/api/shorten', async (req, res) => {
   try {
     const { originalUrl, expiresAt } = req.body;
 
-    // Validation
     if (!originalUrl || !validUrl.isUri(originalUrl)) {
       return res.status(400).json({ error: 'Invalid or missing URL' });
     }
@@ -85,8 +83,8 @@ app.post('/api/urls', async (req, res) => {
   }
 });
 
-// 3️⃣ PUT - Full update (replace entire record)
-app.put('/api/urls/:id', async (req, res) => {
+// PUT - Full update
+app.put('/api/shorten/:id', async (req, res) => {
   try {
     const { originalUrl, expiresAt, isActive } = req.body;
     const urls = await readUrls();
@@ -94,12 +92,10 @@ app.put('/api/urls/:id', async (req, res) => {
 
     if (index === -1) return res.status(404).json({ error: 'URL not found' });
 
-    // Validation
     if (!originalUrl || !validUrl.isUri(originalUrl)) {
       return res.status(400).json({ error: 'Invalid or missing URL' });
     }
 
-    // Replace the whole object
     urls[index] = {
       ...urls[index],
       originalUrl,
@@ -115,8 +111,8 @@ app.put('/api/urls/:id', async (req, res) => {
   }
 });
 
-// 4️⃣ PATCH - Partial update (update specific fields only)
-app.patch('/api/urls/:id', async (req, res) => {
+// PATCH - Partial update
+app.patch('/api/shorten/:id', async (req, res) => {
   try {
     const { originalUrl, expiresAt, isActive } = req.body;
     const urls = await readUrls();
@@ -128,7 +124,6 @@ app.patch('/api/urls/:id', async (req, res) => {
       return res.status(400).json({ error: 'Invalid URL' });
     }
 
-    // Only update provided fields
     if (originalUrl) url.originalUrl = originalUrl;
     if (expiresAt) url.expiresAt = expiresAt;
     if (typeof isActive === 'boolean') url.isActive = isActive;
@@ -142,8 +137,8 @@ app.patch('/api/urls/:id', async (req, res) => {
   }
 });
 
-// 5️⃣ DELETE - Remove a URL
-app.delete('/api/urls/:id', async (req, res) => {
+// DELETE - Remove a URL
+app.delete('/api/shorten/:id', async (req, res) => {
   try {
     const urls = await readUrls();
     const filtered = urls.filter(u => u.id !== req.params.id);
@@ -159,7 +154,7 @@ app.delete('/api/urls/:id', async (req, res) => {
   }
 });
 
-// 6️⃣ Redirect route - (optional) Access original URL using shortCode
+// Redirect route - Access original URL using shortCode
 app.get('/:code', async (req, res) => {
   try {
     const urls = await readUrls();
