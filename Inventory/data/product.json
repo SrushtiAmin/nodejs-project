@@ -1,8 +1,8 @@
 [
   {
     "id": "db8a26f5-b87c-4031-8002-1cc4d1a81f40",
-    "name": "Computer",
-    "category": "Electronics",
+    "name": "Microwave",
+    "category": "Appliances",
     "price": 20000,
     "costPrice": 15000,
     "quantity": 30,
@@ -14,7 +14,7 @@
     ],
     "inStock": true,
     "createdAt": "2025-09-29T13:41:54.153Z",
-    "updatedAt": "2025-09-30T11:02:22.617Z"
+    "updatedAt": "2025-10-06T05:53:47.022Z"
   },
   {
     "id": "d269a5d2-e086-40f4-a13f-a958bd9f927b",
