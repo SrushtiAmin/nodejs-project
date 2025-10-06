@@ -5,7 +5,7 @@ require('dotenv').config(); // to use .env variables
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const BASE_URL = process.env.API_URL || 'https://jsonplaceholder.typicode.com';
+const BASE_URL = process.env.API_URL;
 
 // Middleware to parse JSON
 app.use(express.json());
