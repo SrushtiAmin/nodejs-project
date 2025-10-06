@@ -1,14 +1,5 @@
 [
   {
-    "id": "15a12c",
-    "originalUrl": "https://google.com",
-    "shortUrl": "http://localhost:3000/15a12c",
-    "clicks": 2,
-    "isActive": true,
-    "expiresAt": "2025-10-31T08:35:12.896Z",
-    "createdAt": "2025-10-01T08:35:12.896Z"
-  },
-  {
     "id": "6d1f85",
     "originalUrl": "https://youtube.com",
     "shortUrl": "http://localhost:3000/6d1f85",
@@ -22,8 +13,9 @@
     "originalUrl": "https://instagram.com",
     "shortUrl": "http://localhost:3000/inst",
     "clicks": 1,
-    "isActive": true,
+    "isActive": false,
     "expiresAt": "2025-12-31T23:59:59Z",
-    "createdAt": "2025-10-01T09:23:43.699Z"
+    "createdAt": "2025-10-01T09:23:43.699Z",
+    "updatedAt": "2025-10-06T05:32:33.608Z"
   }
 ]
