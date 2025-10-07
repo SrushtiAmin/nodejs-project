@@ -17,11 +17,12 @@ The app demonstrates **CRUD operations, pagination, API integration, and environ
 ---
 
 ## Tech Stack
-  Runtime | Node.js |
-  Framework | Express.js |
-  HTTP Client | node-fetch |
-  Environment Variables | dotenv |
-  API | JSONPlaceholder (or any custom API via `BASE_URL`) |
+- Node.js  
+- Express.js  
+- node-fetch  
+- dotenv  
+- External API: JSONPlaceholder  
+
 
 ---
 
