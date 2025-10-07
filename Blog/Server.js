@@ -1,11 +1,11 @@
-const express = require('express');
+const express = require('express');// to import express
 const app = express();
-require('dotenv').config();
+require('dotenv').config();//for .env variables
 
 app.use(express.json());
 
-const PORT = process.env.PORT|| 3000;
-const BASE_URL = process.env.BASE_URL;
+const PORT = process.env.PORT|| 3000;//PORT
+const BASE_URL = process.env.BASE_URL;//URL
 
 // ---------------- GET ROUTES ----------------
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
