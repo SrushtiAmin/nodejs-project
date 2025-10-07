@@ -1,189 +1,151 @@
-// server.js
 const express = require('express');
-const axios = require('axios'); // for API calls
-require('dotenv').config(); // to use .env variables
-
 const app = express();
-const PORT = process.env.PORT || 3000;
-const BASE_URL = process.env.API_URL;
+const PORT = 3000;
+const BASE_URL = 'https://jsonplaceholder.typicode.com';
 
-// Middleware to parse JSON
 app.use(express.json());
 
-//POSTS 
+// ---------------- GET ROUTES ----------------
 
-// Get all posts with pagination
+// Get all posts (with pagination)
 app.get('/api/posts', async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const response = await axios.get(`${BASE_URL}/posts`);
-    let posts = response.data;
-
-    // Pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const paginatedPosts = posts.slice(startIndex, endIndex);
-
-    res.status(200).json({
-      total: posts.length,
-      page: parseInt(page),
-      limit: parseInt(limit),
-      data: paginatedPosts
-    });
+    const response = await fetch(`${BASE_URL}/posts`);
+    const posts = await response.json();
+    const start = (page - 1) * limit;
+    const end = page * limit;
+    res.json(posts.slice(start, end));
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to fetch posts' });
+    res.status(500).json({ message: 'Error fetching posts', error: error.message });
   }
 });
 
-// Get single post with comments
+// Get post by ID with comments
 app.get('/api/posts/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const postResponse = await axios.get(`${BASE_URL}/posts/${id}`);
-    const commentsResponse = await axios.get(`${BASE_URL}/posts/${id}/comments`);
-
-    const post = {
-      ...postResponse.data,
-      comments: commentsResponse.data
-    };
-
-    res.status(200).json(post);
+    const postRes = await fetch(`${BASE_URL}/posts/${req.params.id}`);
+    const post = await postRes.json();
+    const commentsRes = await fetch(`${BASE_URL}/posts/${req.params.id}/comments`);
+    const comments = await commentsRes.json();
+    post.comments = comments;
+    res.json(post);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to fetch post with comments' });
+    res.status(500).json({ message: 'Error fetching post', error: error.message });
   }
 });
 
-// Create a new post
-app.post('/api/posts', async (req, res) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/posts`, req.body);
-    res.status(201).json(response.data);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to create post' });
-  }
-});
-
-// Update a post (replace whole post)
-app.put('/api/posts/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const response = await axios.put(`${BASE_URL}/posts/${id}`, req.body);
-    res.status(200).json(response.data);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to update post' });
-  }
-});
-
-// Patch a post (update partial fields)
-app.patch('/api/posts/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const response = await axios.patch(`${BASE_URL}/posts/${id}`, req.body);
-    res.status(200).json(response.data);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to patch post' });
-  }
-});
-
-// Delete a post
-app.delete('/api/posts/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await axios.delete(`${BASE_URL}/posts/${id}`);
-    res.status(200).json({ message: 'Post deleted successfully' });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to delete post' });
-  }
-});
-
-// COMMENTS 
-
-// Get comments for a post
+// Get comments of a post
 app.get('/api/posts/:id/comments', async (req, res) => {
   try {
-    const { id } = req.params;
-    const response = await axios.get(`${BASE_URL}/posts/${id}/comments`);
-    res.status(200).json(response.data);
+    const response = await fetch(`${BASE_URL}/posts/${req.params.id}/comments`);
+    const comments = await response.json();
+    res.json(comments);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to fetch comments' });
+    res.status(500).json({ message: 'Error fetching comments', error: error.message });
   }
 });
 
-// Create a comment for a post
+// Get posts by user
+app.get('/api/users/:id/posts', async (req, res) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/${req.params.id}/posts`);
+    const posts = await response.json();
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user posts', error: error.message });
+  }
+});
+
+// ---------------- POST ROUTES ----------------
+
+// Create new post
+app.post('/api/posts', async (req, res) => {
+  try {
+    const newPost = req.body;
+    const response = await fetch(`${BASE_URL}/posts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newPost)
+    });
+    const data = await response.json();
+    res.status(201).json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating post', error: error.message });
+  }
+});
+
+// Add new comment to a post
 app.post('/api/posts/:id/comments', async (req, res) => {
   try {
-    const { id } = req.params;
-    const response = await axios.post(`${BASE_URL}/posts/${id}/comments`, req.body);
-    res.status(201).json(response.data);
+    const newComment = req.body;
+    const response = await fetch(`${BASE_URL}/posts/${req.params.id}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newComment)
+    });
+    const data = await response.json();
+    res.status(201).json(data);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to create comment' });
+    res.status(500).json({ message: 'Error adding comment', error: error.message });
+  }
+});
+
+// ---------------- PUT ROUTES ----------------
+
+// Update a post
+app.put('/api/posts/:id', async (req, res) => {
+  try {
+    const updatedPost = req.body;
+    const response = await fetch(`${BASE_URL}/posts/${req.params.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedPost)
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating post', error: error.message });
   }
 });
 
 // Update a comment
 app.put('/api/comments/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const response = await axios.put(`${BASE_URL}/comments/${id}`, req.body);
-    res.status(200).json(response.data);
+    const updatedComment = req.body;
+    const response = await fetch(`${BASE_URL}/comments/${req.params.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedComment)
+    });
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to update comment' });
+    res.status(500).json({ message: 'Error updating comment', error: error.message });
   }
 });
 
-// Patch a comment
-app.patch('/api/comments/:id', async (req, res) => {
+// ---------------- DELETE ROUTES ----------------
+
+// Delete a post
+app.delete('/api/posts/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const response = await axios.patch(`${BASE_URL}/comments/${id}`, req.body);
-    res.status(200).json(response.data);
+    await fetch(`${BASE_URL}/posts/${req.params.id}`, { method: 'DELETE' });
+    res.json({ message: 'Post deleted successfully' });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to patch comment' });
+    res.status(500).json({ message: 'Error deleting post', error: error.message });
   }
 });
 
 // Delete a comment
 app.delete('/api/comments/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    await axios.delete(`${BASE_URL}/comments/${id}`);
-    res.status(200).json({ message: 'Comment deleted successfully' });
+    await fetch(`${BASE_URL}/comments/${req.params.id}`, { method: 'DELETE' });
+    res.json({ message: 'Comment deleted successfully' });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to delete comment' });
+    res.status(500).json({ message: 'Error deleting comment', error: error.message });
   }
 });
 
-// USERS 
-
-// Get all posts by a user
-app.get('/api/users/:id/posts', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const response = await axios.get(`${BASE_URL}/users/${id}/posts`);
-    res.status(200).json(response.data);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: 'Failed to fetch user posts' });
-  }
-});
-
-// Test route
-app.get('/', (req, res) => {
-  res.send('Server is running!');
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+// ---------------- SERVER ----------------
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
