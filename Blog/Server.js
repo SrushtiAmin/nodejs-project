@@ -1,5 +1,5 @@
 const express = require('express');// to import express
-const app = express();
+const app = express();// initialize object 
 require('dotenv').config();//for .env variables
 
 app.use(express.json());
