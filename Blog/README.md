@@ -25,7 +25,7 @@ The app demonstrates **CRUD operations, pagination, API integration, and environ
 
 ---
 
-## nvironment Variables
+## Environment Variables
 Create a `.env` file in the root of your project:
 
 ```bash
