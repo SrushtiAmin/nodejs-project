@@ -111,6 +111,37 @@ app.put('/api/posts/:id', async (req, res) => {
     res.status(500).json({ message: 'Error updating post', error: error.message });
   }
 });
+// ---------------- PATCH ROUTES ----------------
+
+// Patch a post (update partial fields)
+app.patch('/api/posts/:id', async (req, res) => {
+  try {
+    const response = await fetch(`${BASE_URL}/posts/${req.params.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Error patching post', error: error.message });
+  }
+});
+
+// Patch a comment (update partial fields)
+app.patch('/api/comments/:id', async (req, res) => {
+  try {
+    const response = await fetch(`${BASE_URL}/comments/${req.params.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Error patching comment', error: error.message });
+  }
+});
 
 // Update a comment
 app.put('/api/comments/:id', async (req, res) => {
