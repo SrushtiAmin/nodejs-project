@@ -1,11 +1,11 @@
-# 📰 Blog Project
+# Blog Project
 
 This is a **Node.js + Express** blog application that interacts with an external API (like [JSONPlaceholder](https://jsonplaceholder.typicode.com/)) to manage blog posts and comments.  
 The app demonstrates **CRUD operations, pagination, API integration, and environment-based configuration**.
 
 ---
 
-## 🚀 Features
+## Features
 - Fetch all posts with pagination  
 - View a single post with its comments  
 - Fetch comments for a specific post  
@@ -16,7 +16,7 @@ The app demonstrates **CRUD operations, pagination, API integration, and environ
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
   Runtime | Node.js |
   Framework | Express.js |
   HTTP Client | node-fetch |
@@ -25,7 +25,7 @@ The app demonstrates **CRUD operations, pagination, API integration, and environ
 
 ---
 
-## ⚙️ Environment Variables
+## nvironment Variables
 Create a `.env` file in the root of your project:
 
 ```bash
