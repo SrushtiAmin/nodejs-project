@@ -6,6 +6,7 @@ const PORT = process.env.PORT|| 3000;
 const BASE_URL = process.env.BASE_URL;
 
 // ---------------- GET ROUTES ----------------
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 // Get all posts (with pagination)
 app.get('/api/posts', async (req, res) => {
