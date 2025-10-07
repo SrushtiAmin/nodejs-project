@@ -44,7 +44,7 @@ class TodoManagement {
     // List todos
     async listTodos({ status, priority, sortBy } = {}) {
         return new Promise((resolve) => {
-            let result = Object.values(this.todos);
+            let result = Object.values(this.todos);//return array of values 
 
             if (status) result = result.filter(todo => todo.status === status);
             if (priority) result = result.filter(todo => todo.priority === priority.toLowerCase());
