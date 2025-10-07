@@ -22,7 +22,7 @@ class BankSystem {
     }
 
     // Helper for input validation
-    _validateAccountInput(customerName, accountType, initialBalance) {
+    validateAccountInput(customerName, accountType, initialBalance) {
         const ACCOUNT_TYPES = ['SAVINGS', 'CURRENT'];
 
         if (!customerName || typeof customerName !== 'string') {
@@ -38,7 +38,7 @@ class BankSystem {
     }
 
     async createAccount(customerName, accountType, initialBalance = 0) {
-        const validationError = this._validateAccountInput(customerName, accountType, initialBalance);
+        const validationError = this.validateAccountInput(customerName, accountType, initialBalance);
         if (validationError) return validationError;
 
         const accNumber = this.accountCounter.toString();
@@ -97,7 +97,7 @@ class BankSystem {
         return result;
     }
 
-    async _processTransaction(account, type, amount, description) {
+    async processTransaction(account, type, amount, description) {
         if (!account) return { error: "Account not found" };
         if (!account.isActive) return { error: "Account is inactive" };
         if (amount <= 0) return { error: "Amount must be greater than 0" };
@@ -128,12 +128,12 @@ class BankSystem {
 
     async deposit(accountNumber, amount) {
         const account = this.accounts[accountNumber];
-        return await this._processTransaction(account, 'DEPOSIT', amount, 'Deposit');
+        return await this.processTransaction(account, 'DEPOSIT', amount, 'Deposit');
     }
 
     async withdraw(accountNumber, amount) {
         const account = this.accounts[accountNumber];
-        return await this._processTransaction(account, 'WITHDRAW', amount, 'Withdrawal');
+        return await this.processTransaction(account, 'WITHDRAW', amount, 'Withdrawal');
     }
 
     async transfer(fromAccountNumber, toAccountNumber, amount) {
@@ -144,10 +144,10 @@ class BankSystem {
 
         if (!fromAcc || !toAcc) return { error: "Source or destination account not found" };
 
-        const withdrawResult = await this._processTransaction(fromAcc, 'TRANSFER-OUT', amount, `Transfer to ${toAccountNumber}`);
+        const withdrawResult = await this.processTransaction(fromAcc, 'TRANSFER-OUT', amount, `Transfer to ${toAccountNumber}`);
         if (withdrawResult.error) return withdrawResult;
 
-        const depositResult = await this._processTransaction(toAcc, 'TRANSFER-IN', amount, `Transfer from ${fromAccountNumber}`);
+        const depositResult = await this.processTransaction(toAcc, 'TRANSFER-IN', amount, `Transfer from ${fromAccountNumber}`);
         return { withdraw: withdrawResult, deposit: depositResult };
     }
 }
